@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum ViewStates
+public enum GamePhase
 {
-	Outside,
-	Room,
-	Computer
+	NarrativePreStream,
+	NarrativePostStream,
+	Planning,
+	Streaming,
+	None
 }
 
 public enum GameTimeBlock

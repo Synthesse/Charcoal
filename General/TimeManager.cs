@@ -29,11 +29,11 @@ public class TimeManager : MonoBehaviour {
 
 	public Text timeText;
 	public Button[] timePassesButtons;
-	public Dropdown altTimingDropdown;
 
 	public class TimeEvent : UnityEvent<GameTimeBlock, System.DayOfWeek> {}
 
 	public void TimePasses() {
+		Debug.Log ("TIME IS PASSING");
 		if (!timePassing)
 			timePassing = true;
 		if (currentGameTimeBlock == GameTimeBlock.Dawn) {
@@ -54,9 +54,6 @@ public class TimeManager : MonoBehaviour {
 	}
 
 	private void UpdateTimeString() {
-		if (altTimingDropdown.value != 1)
-			timeText.text = gameDT.ToString ("M/d htt");
-		else
 			timeText.text = "";
 	}
 

@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ScheduleContainer : MonoBehaviour {
+public class ScheduleClockGroup : MonoBehaviour {
 
 	// Need some sort of preinitialized array to track locations for snap-to clock grid
-	public NewSchedule schedule;
+	public Schedule schedule;
 	public List<ClockToken> clocksInContainer;
 	public ScheduleActivities containerActivity;
 	// Need something to deal with specific activities
