@@ -13,7 +13,7 @@ public class StreamTimeController : MonoBehaviour {
 
 	public void StartTimer() {
 		expireTime = Time.time;
-		AddStreamTime (20);
+		AddStreamTime (200);
 	}
 
 	public void AddStreamTime (int timeAdded) {

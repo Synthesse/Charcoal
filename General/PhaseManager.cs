@@ -43,8 +43,8 @@ public class PhaseManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		narrativePhaseManager.gameObject.SetActive (false);
-		streamingPhaseManager.gameObject.SetActive (false);
-		currentGamePhase = GamePhase.Planning;
+		planningPhaseManager.gameObject.SetActive (false);
+		currentGamePhase = GamePhase.Streaming;
 	}
 	
 	// Update is called once per frame
