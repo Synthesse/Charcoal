@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance = null;
 	public PhaseManager phaseManager;
+	public MinigameManager miniGameManager;
 
 
 	void Awake () {

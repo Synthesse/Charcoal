@@ -16,31 +16,33 @@ public class PlayerInputController : MonoBehaviour, ICommandController {
 
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			attachedUnit.queuedCommand = new SlashCommand ();
+		if (!attachedUnit.animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability")) {
+			if (Input.GetKeyDown (KeyCode.Space)) {
+				attachedUnit.queuedCommand = new SlashCommand ();
 		
-		} else if (MovementKeyChange()) {
-			if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.A)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.Northwest, false);
-			} else if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.D)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.Northeast, false);
-			} else if (Input.GetKey (KeyCode.S) && Input.GetKey (KeyCode.A)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.Southwest, false);
-			} else if (Input.GetKey (KeyCode.S) && Input.GetKey (KeyCode.D)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.Southeast, false);
-			} else if (Input.GetKey (KeyCode.W)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.North, false);
-			} else if (Input.GetKey (KeyCode.S)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.South, false);
-			} else if (Input.GetKey (KeyCode.A)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.West, false);
-			} else if (Input.GetKey (KeyCode.D)) {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.East, false);
-			} else {
-				attachedUnit.queuedCommand = new MoveCommand (Direction8.South, true);
+			} else if (MovementKeyChange ()) {
+				if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.A)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.Northwest, false);
+				} else if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.D)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.Northeast, false);
+				} else if (Input.GetKey (KeyCode.S) && Input.GetKey (KeyCode.A)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.Southwest, false);
+				} else if (Input.GetKey (KeyCode.S) && Input.GetKey (KeyCode.D)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.Southeast, false);
+				} else if (Input.GetKey (KeyCode.W)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.North, false);
+				} else if (Input.GetKey (KeyCode.S)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.South, false);
+				} else if (Input.GetKey (KeyCode.A)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.West, false);
+				} else if (Input.GetKey (KeyCode.D)) {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.East, false);
+				} else {
+					attachedUnit.queuedCommand = new MoveCommand (Direction8.South, true);
+				}
 			}
-		}
-
-//			
+		}	
 	}
+
+
 }

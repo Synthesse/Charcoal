@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WizardAIController : MonoBehaviour {
-
-	private Wizard attachedWizard;
+public class Gate : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

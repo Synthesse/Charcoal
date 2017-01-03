@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SlashCommand : ICommand {
 
+	//TODO: Abstract to N-degree cone
 	private bool CheckPositionInDirectionalCone(Vector3 relativePosition, Direction4 direction) {
 		bool condition1 = false;
 		bool condition2 = false;
@@ -39,7 +40,7 @@ public class SlashCommand : ICommand {
 		}
 
 		foreach (Collider2D col in struckColliders) {
-			Debug.Log ("CheckingStructCollider");
+			Debug.Log ("CheckingStruckCollider");
 			Vector3 relativePosition = col.transform.position - unit.transform.position;
 			if (relativePosition.magnitude > 0 && CheckPositionInDirectionalCone (relativePosition, unit.facing)) {
 				col.GetComponent<BaseUnit> ().Hurt ();

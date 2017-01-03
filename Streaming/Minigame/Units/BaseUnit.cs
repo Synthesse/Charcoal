@@ -3,9 +3,10 @@ using System.Collections;
 
 public class BaseUnit : MonoBehaviour {
 
-	protected int hitPoints;
+	protected int hitPoints = 10;
 	protected int defense;
-	protected int moveSpeed = 1;
+	protected const float baseMoveSpeed = 0.7f;
+	public float currentMoveSpeed = 0.7f;
 	protected Allegiance allegiance;
 	public Direction4 facing;
 	public Direction8 movementDirection;
@@ -14,15 +15,10 @@ public class BaseUnit : MonoBehaviour {
 	public ICommandController commandController;
 	public SpriteRenderer spriteRenderer;
 	public Animator animator;
+	public Rigidbody2D rb2D;
 
 
-	// Use this for initialization
-	protected void Initialize() {
-		spriteRenderer = this.gameObject.GetComponent<SpriteRenderer> ();
-		animator = this.gameObject.GetComponent<Animator> ();
-	}
-
-	protected void ExecuteQueuedCommands() {
+	protected virtual void ExecuteQueuedCommands() {
 		if (queuedCommand != null) {
 			queuedCommand.Execute (this);
 //			if (queuedCommand is MoveCommand) {
@@ -34,12 +30,28 @@ public class BaseUnit : MonoBehaviour {
 		}
 	}
 		
-	public void UpdateFacing(Direction4 newFacing) {
+	public virtual void UpdateFacing(Direction4 newFacing) {
 		facing = newFacing;
 		animator.SetInteger ("Facing", (int)facing);
 	}
 
-	private Vector3 TranslateDirectiontoVector3 (Direction8 dir) {
+	protected Vector3 TranslateDirectiontoVector3 (Direction4 dir) {
+		Vector3 vec = new Vector3 (0, 0, 0);
+
+		if (dir == Direction4.North) {
+			vec = new Vector3 (0, 1, 0);
+		} else if (dir == Direction4.East) {
+			vec = new Vector3 (1, 0, 0);
+		} else if (dir == Direction4.South) {
+			vec = new Vector3 (0, -1, 0);
+		} else if (dir == Direction4.West) {
+			vec = new Vector3 (-1, 0, 0);
+		} 
+
+		return vec;
+	}
+
+	protected Vector3 TranslateDirectiontoVector3 (Direction8 dir) {
 		Vector3 vec = new Vector3 (0, 0, 0);
 
 		if (dir == Direction8.North) {
@@ -63,7 +75,7 @@ public class BaseUnit : MonoBehaviour {
 		return vec;
 	}
 
-	public void Move() {
+	public virtual void Move() {
 		if (!animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability")) {
 			if (isMoving) {
 				if (facing == Direction4.North && !animator.GetCurrentAnimatorStateInfo (0).IsName ("WalkUp")) {
@@ -75,8 +87,9 @@ public class BaseUnit : MonoBehaviour {
 				} else if (facing == Direction4.South && !animator.GetCurrentAnimatorStateInfo (0).IsName ("WalkDown")) {
 					animator.SetTrigger ("WalkDown");
 				}
-				float speedConstant = Time.deltaTime * moveSpeed;
-				transform.position += TranslateDirectiontoVector3(movementDirection) * speedConstant;
+				float speedConstant = Time.fixedDeltaTime * currentMoveSpeed;
+//				transform.position += TranslateDirectiontoVector3(movementDirection) * speedConstant;
+				rb2D.MovePosition(transform.position + TranslateDirectiontoVector3(movementDirection) * speedConstant);
 					
 			} else {
 				if (!animator.GetCurrentAnimatorStateInfo (0).IsTag ("Idle") && !animator.GetCurrentAnimatorStateInfo (0).IsTag ("Interruptable"))
@@ -86,16 +99,39 @@ public class BaseUnit : MonoBehaviour {
 		}
 	}
 
-	public void Hurt() {
+	public virtual void Hurt() {
 		animator.SetTrigger ("Hurt");
-		Debug.Log ("Hurt");
+		hitPoints -= 5;
+	}
+
+	public virtual void Hurt(int loss) {
+		animator.SetTrigger ("Hurt");
+		hitPoints -= loss;
+	}
+
+	public virtual void Kill() {
+		Destroy (gameObject);
+	}
+
+	protected void ProtectedStart() {
+		spriteRenderer = this.gameObject.GetComponent<SpriteRenderer> ();
+		animator = this.gameObject.GetComponent<Animator> ();
+		rb2D = this.gameObject.GetComponent<Rigidbody2D> ();
+		facing = Direction4.South;
 	}
 
 	void Start () {
-		Initialize ();
+		ProtectedStart ();
 	}
 
-	void Update () {
+	protected void ProtectedUpdate() {
+		if (hitPoints <= 0) {
+			Kill ();
+		}
 		ExecuteQueuedCommands ();
+	}
+
+	void FixedUpdate () {
+		ProtectedUpdate ();
 	}
 }

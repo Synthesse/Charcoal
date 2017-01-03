@@ -4,12 +4,16 @@ using System.Collections;
 public class Knight : BaseUnit {
 
 
-
-	void Start () {
-		base.Initialize ();
+	public override void Kill ()
+	{
+		GameManager.instance.miniGameManager.GameOver ();
 	}
 
-	void Update () {
-		base.ExecuteQueuedCommands ();
+	void Start () {
+		base.ProtectedStart ();
+	}
+
+	void FixedUpdate () {
+		base.ProtectedUpdate ();
 	}
 }

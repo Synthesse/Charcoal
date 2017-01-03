@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MiniGameController : MonoBehaviour {
+public class OldMiniGameController : MonoBehaviour {
 
 	private int gold;
 	private float nextMinionTime;
