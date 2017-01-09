@@ -26,6 +26,15 @@ public class SlashCommand : ICommand {
 		return (condition1 && condition2);
 	}
 
+	private int AllegianceToEnemyLayerMask(Allegiance sourceAllegiance) {
+		if (sourceAllegiance == Allegiance.Knight) {
+			return 1 << 12 | 1 << 9;
+		} else if (sourceAllegiance == Allegiance.Wizard) {
+			return 1 << 11 | 1 << 9;
+		}
+		return 0;
+	}
+
 	public void Execute(BaseUnit unit) {
 		Collider2D[] struckColliders = Physics2D.OverlapCircleAll(unit.transform.position, 0.4f);
 
@@ -40,10 +49,12 @@ public class SlashCommand : ICommand {
 		}
 
 		foreach (Collider2D col in struckColliders) {
-			Debug.Log ("CheckingStruckCollider");
 			Vector3 relativePosition = col.transform.position - unit.transform.position;
-			if (relativePosition.magnitude > 0 && CheckPositionInDirectionalCone (relativePosition, unit.facing)) {
-				col.GetComponent<BaseUnit> ().Hurt ();
+			if (relativePosition.magnitude > 0 && CheckPositionInDirectionalCone (relativePosition, unit.facing) && col == Physics2D.Linecast (unit.transform.position, col.transform.position, AllegianceToEnemyLayerMask(unit.allegiance)).collider) {
+				BaseUnit hitUnit = col.GetComponent<BaseUnit> ();
+				if (hitUnit != null) {
+					hitUnit.Hurt (unit.allegiance);
+				} 
 			}
 		}
 	}

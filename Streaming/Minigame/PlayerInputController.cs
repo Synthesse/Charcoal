@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerInputController : MonoBehaviour, ICommandController {
 
 	private BaseUnit attachedUnit;
+	public bool manualRedetectMovement = false;
 
 	private bool MovementKeyChange() {
 		return (Input.GetKeyDown(KeyCode.W) || Input.GetKeyUp(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyUp(KeyCode.D));
@@ -16,11 +17,13 @@ public class PlayerInputController : MonoBehaviour, ICommandController {
 
 	// Update is called once per frame
 	void Update () {
-		if (!attachedUnit.animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability")) {
+		if (!attachedUnit.animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability") && !attachedUnit.nonAnimatedAbilityInProgress) {
 			if (Input.GetKeyDown (KeyCode.Space)) {
 				attachedUnit.queuedCommand = new SlashCommand ();
-		
-			} else if (MovementKeyChange ()) {
+			} else if (Input.GetKeyDown (KeyCode.LeftShift)) {
+				attachedUnit.queuedCommand = new BlockCommand ();
+			} else if (MovementKeyChange () || manualRedetectMovement) {
+				manualRedetectMovement = false;
 				if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.A)) {
 					attachedUnit.queuedCommand = new MoveCommand (Direction8.Northwest, false);
 				} else if (Input.GetKey (KeyCode.W) && Input.GetKey (KeyCode.D)) {

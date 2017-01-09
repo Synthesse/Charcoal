@@ -4,11 +4,12 @@ using System.Collections;
 public class Grunt : BaseUnit, ICanCarry {
 
 	public bool isCarrying { get; private set;}
-	public Gate targetGate { get; private set;}
+	public Gate targetGate;
+	public Direction8 spawnDirection;
 
-	public void SetWall (Gate wall) {
-		targetGate = wall;
-	}
+//	public void SetWall (Gate wall) {
+//		targetGate = wall;
+//	}
 
 	public void Carry (Damsel damsel) {
 		if (damsel.AddCarryUnit (this)) {
@@ -26,6 +27,10 @@ public class Grunt : BaseUnit, ICanCarry {
 		moveCommand.Execute (this);
 	}
 
+	public Direction8 GetSpawnDirection() {
+		return spawnDirection;
+	}
+
 	public override void Kill ()
 	{
 		if (isCarrying) {
@@ -37,6 +42,8 @@ public class Grunt : BaseUnit, ICanCarry {
 	void Start () {
 		base.ProtectedStart ();
 		isCarrying = false;
+		allegiance = Allegiance.Wizard;
+		animator.SetFloat ("SlashSpeed", 0.75f);
 	}
 
 	void FixedUpdate () {

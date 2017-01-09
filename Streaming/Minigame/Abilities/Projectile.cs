@@ -5,6 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour {
 
 	private float speed = 1f;
+	public Allegiance allegiance;
 
 	public void SetVelocity(Vector3 vec) {
 		GetComponent<Rigidbody2D> ().velocity = vec * speed;
@@ -13,7 +14,10 @@ public class Projectile : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D otherCollider) {
 		BaseUnit hitUnit = otherCollider.GetComponent<BaseUnit> ();
 		if (hitUnit != null) {
-			hitUnit.Hurt ();
+			hitUnit.Hurt (allegiance);
+			if (allegiance == hitUnit.allegiance) {
+				return;
+			}
 		}
 		Destroy (gameObject);
 	}

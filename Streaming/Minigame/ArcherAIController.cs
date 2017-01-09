@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Pathfinding;
 
-public class WizardAIController : MonoBehaviour {
+public class ArcherAIController : MonoBehaviour {
 
 	private Seeker attachedSeeker;
 	private int currentWaypoint = 0;
@@ -10,7 +11,7 @@ public class WizardAIController : MonoBehaviour {
 	private Vector3 targetPosition;
 	private BaseUnit targetUnit;
 
-	private Wizard attachedWizard;
+	private Archer attachedArcher;
 
 	private float AIDelay = 0.05f;
 	private float timeOfLastCommand = 0f;
@@ -30,8 +31,8 @@ public class WizardAIController : MonoBehaviour {
 
 	//Revise two methods below to something more generic?
 	private Direction8 PathWaypointToDirection() {
-		float xComponent = path.vectorPath [currentWaypoint].x - attachedWizard.transform.position.x;
-		float yComponent = path.vectorPath [currentWaypoint].y - attachedWizard.transform.position.y;
+		float xComponent = path.vectorPath [currentWaypoint].x - attachedArcher.transform.position.x;
+		float yComponent = path.vectorPath [currentWaypoint].y - attachedArcher.transform.position.y;
 		float angle = Mathf.Atan2 (yComponent, xComponent);
 
 
@@ -59,8 +60,8 @@ public class WizardAIController : MonoBehaviour {
 	}
 
 	private Direction4 DirectionToTarget(Vector3 vec) {
-		float xComponent = vec.x - attachedWizard.transform.position.x;
-		float yComponent = vec.y - attachedWizard.transform.position.y;
+		float xComponent = vec.x - attachedArcher.transform.position.x;
+		float yComponent = vec.y - attachedArcher.transform.position.y;
 		float angle = Mathf.Atan2 (yComponent, xComponent);
 
 		if (angle < -3 * Mathf.PI / 4f) {
@@ -81,33 +82,33 @@ public class WizardAIController : MonoBehaviour {
 	}
 
 	void Start () {
-		attachedWizard = this.gameObject.GetComponent<Wizard> ();
+		attachedArcher = this.gameObject.GetComponent<Archer> ();
 		attachedSeeker = this.gameObject.GetComponent<Seeker> ();
-		if (attachedWizard.targetGate != null) {
-			targetUnit = attachedWizard.targetGate;
-			attachedWizard.targetGate.RegisterListener (() => TargetKnight ());
+		if (attachedArcher.targetGate != null) {
+			targetUnit = attachedArcher.targetGate;
+			attachedArcher.targetGate.RegisterListener (() => TargetKnight ());
 		} else {
 			TargetKnight ();
 		}
 		targetPosition = targetUnit.transform.position;
 		GameManager.instance.miniGameManager.gameObject.GetComponent<PathfindingEventController> ().RegisterListener(() => RecalculatePath());
 	}
-		
+
 	void Update () {
-		if (Time.time - timeOfLastCommand > AIDelay && !attachedWizard.animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability") && !attachedWizard.nonAnimatedAbilityInProgress) {
+		if (Time.time - timeOfLastCommand > AIDelay && !attachedArcher.animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability") && !attachedArcher.nonAnimatedAbilityInProgress) {
 			timeOfLastCommand = Time.time;
 			targetPosition = targetUnit.transform.position;
-			BaseUnit linecastUnit = Physics2D.Linecast (attachedWizard.transform.position, targetPosition, 1 << 11 | 1 << 9).collider.gameObject.GetComponent<BaseUnit> ();
+			BaseUnit linecastUnit = Physics2D.Linecast (attachedArcher.transform.position, targetPosition, 1 << 11 | 1 << 9).collider.gameObject.GetComponent<BaseUnit> ();
 			if (linecastUnit != null && linecastUnit.allegiance == Allegiance.Knight) {
-				attachedWizard.UpdateFacing (DirectionToTarget (targetPosition));
-				attachedWizard.queuedCommand = new ShootCommand (targetPosition);
+				attachedArcher.UpdateFacing (DirectionToTarget (targetPosition));
+				attachedArcher.queuedCommand = new ShootCommand (targetPosition);
 			} else {
 				if (path != null && path.vectorPath.Count > 0 && currentWaypoint < path.vectorPath.Count) {
 					Direction8 waypointDirection = PathWaypointToDirection ();
-					if (!attachedWizard.isMoving || attachedWizard.movementDirection != waypointDirection) {
-						attachedWizard.queuedCommand = new MoveCommand (PathWaypointToDirection (), false);
+					if (!attachedArcher.isMoving || attachedArcher.movementDirection != waypointDirection) {
+						attachedArcher.queuedCommand = new MoveCommand (PathWaypointToDirection (), false);
 					}
-					if (Vector2.Distance (path.vectorPath [currentWaypoint], attachedWizard.transform.position) < 0.05f) {
+					if (Vector2.Distance (path.vectorPath [currentWaypoint], attachedArcher.transform.position) < 0.05f) {
 						currentWaypoint++;
 					}
 				}

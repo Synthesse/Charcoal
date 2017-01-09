@@ -3,7 +3,7 @@
 public class CarryCommand : ICommand {
 
 	private bool CheckProximityToDamsel(BaseUnit unit, Damsel damsel) {
-		return (Vector2.Distance(damsel.transform.position, unit.transform.position) < 0.8f);
+		return (Vector2.Distance(damsel.transform.position, unit.transform.position) < 0.5f);
 	}
 
 	public void Execute(BaseUnit unit) {

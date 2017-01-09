@@ -6,6 +6,7 @@ public class Damsel : BaseUnit {
 
 	public BaseUnit[] carryingUnits;
 	private bool beingCarried;
+	private Direction8 carryDirection;
 
 	private int NumberOfCarryingUnits () {
 		int i = 0;
@@ -60,14 +61,20 @@ public class Damsel : BaseUnit {
 
 			unit.transform.position = carryPoint;
 			carryingUnits [carryIndex] = unit;
+			MoveCommand moveCommand;
 
-			MoveCommand moveCommand = new MoveCommand (Direction8.West, false);
+			ICanCarry castedUnit = unit as ICanCarry;
+			if (carryDirection == Direction8.North) {
+				carryDirection = castedUnit.GetSpawnDirection ();
+			} 
+			moveCommand = new MoveCommand (carryDirection, false);
+
 
 			if (NumberOfCarryingUnits () == 1) {
 				queuedCommand = moveCommand;
 				beingCarried = false;
 			}
-			ICanCarry castedUnit = unit as ICanCarry;
+
 			castedUnit.ReceivePushedMoveCommand (moveCommand);
 			SetCarryMoveSpeed ();
 
@@ -130,7 +137,7 @@ public class Damsel : BaseUnit {
 		}
 	}
 
-	public override void Hurt() {
+	public override void Hurt(Allegiance sourceAllegiance) {
 	}
 
 
@@ -139,6 +146,8 @@ public class Damsel : BaseUnit {
 	void Start () {
 		carryingUnits = new BaseUnit[4];
 		base.ProtectedStart ();
+		allegiance = Allegiance.Damsel;
+		carryDirection = Direction8.North;
 	}
 	
 	// Update is called once per frame

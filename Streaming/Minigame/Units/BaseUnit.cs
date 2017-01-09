@@ -3,11 +3,11 @@ using System.Collections;
 
 public class BaseUnit : MonoBehaviour {
 
-	protected int hitPoints = 10;
+	public int hitPoints = 10;
 	protected int defense;
-	protected const float baseMoveSpeed = 0.7f;
+	protected float baseMoveSpeed = 0.7f;
 	public float currentMoveSpeed = 0.7f;
-	protected Allegiance allegiance;
+	public Allegiance allegiance;
 	public Direction4 facing;
 	public Direction8 movementDirection;
 	public bool isMoving = false;
@@ -16,6 +16,7 @@ public class BaseUnit : MonoBehaviour {
 	public SpriteRenderer spriteRenderer;
 	public Animator animator;
 	public Rigidbody2D rb2D;
+	public bool nonAnimatedAbilityInProgress = false;
 
 
 	protected virtual void ExecuteQueuedCommands() {
@@ -76,7 +77,7 @@ public class BaseUnit : MonoBehaviour {
 	}
 
 	public virtual void Move() {
-		if (!animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability")) {
+		if (!animator.GetCurrentAnimatorStateInfo (0).IsTag ("Ability") && !nonAnimatedAbilityInProgress) {
 			if (isMoving) {
 				if (facing == Direction4.North && !animator.GetCurrentAnimatorStateInfo (0).IsName ("WalkUp")) {
 					animator.SetTrigger ("WalkUp");
@@ -99,17 +100,24 @@ public class BaseUnit : MonoBehaviour {
 		}
 	}
 
-	public virtual void Hurt() {
-		animator.SetTrigger ("Hurt");
-		hitPoints -= 5;
+	public virtual void Hurt(Allegiance sourceAllegiance) {
+		if (sourceAllegiance != allegiance) {
+			animator.SetTrigger ("Hurt");
+			hitPoints -= 5;
+		}
 	}
 
-	public virtual void Hurt(int loss) {
-		animator.SetTrigger ("Hurt");
-		hitPoints -= loss;
+	public virtual void Hurt(Allegiance sourceAllegiance, int loss) {
+		if (sourceAllegiance != allegiance) {
+			animator.SetTrigger ("Hurt");
+			hitPoints -= loss;
+		}
 	}
 
 	public virtual void Kill() {
+		if (allegiance == Allegiance.Wizard) {
+			GameManager.instance.miniGameManager.RemoveWizardUnitFromList (this);
+		}
 		Destroy (gameObject);
 	}
 
